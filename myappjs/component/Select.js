@@ -45,7 +45,7 @@ export default class Select extends Component {
                 <Text style={styles.select}>单选</Text>
                 <TouchableWithoutFeedback onPress={this.onselectone}>
                     <View style={styles.selectone}/>
-                    {/* <View style={`{styles.select_${color1}}`} /> */}
+                    {/* <View style={`{styles.select_${color1}}`}/> */}
                 </TouchableWithoutFeedback>
             </View>
             <View style={styles.container}>
