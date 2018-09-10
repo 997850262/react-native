@@ -16,6 +16,7 @@ import {
   AppRegistry,
   Button
 } from 'react-native';
+import Video from 'react-native-video'
 const img = require('../source/btn_pause.png');// 暂停
 const img2 = require('../source/btn_play.png');// 播放
 // const img3 = require('../../source/cut_music_finish.png');// 完成
@@ -37,14 +38,246 @@ constructor(props) {
         signendTime: 0
     };
     }
-    getMaskClassName = isAcitve => {
-        if (!isAcitve) {
-          return styles.hideMask;
+    onTouchStart=event => {
+      // console.log(event);
+      // console.log(event.touches);
+      this.startX = event.touches[0].clientX;
+      this.setState({
+        ismove: true
+      });
+    }
+    onTouchMove=event => {
+      const { music } = this.props;
+      const myVideo = document.getElementById('myAudio');
+      this.endX = event.changedTouches[0].clientX;
+      // console.log(11111111,this.startX)
+      // console.log(22222222,this.endX)
+      if (!(music.music.recommendresult.indexOf(music.music.selectid) + 1)) {
+        if (this.state.signendTime === 0 && this.endX > 300 && music.music.entities[music.music.selectid].emt === 0) { // 限制滑块
+          this.endX = 300;
+        } else if (this.state.signstartTime === 0 && this.endX < 56 && music.music.entities[music.music.selectid].bmt === 0) {
+          this.endX = 56;
+        } else if (this.state.signstartTime !== 0 && this.endX < ((this.state.signstartTime * 252) / (this.state.alltime) + 56)) {
+          this.endX = ((this.state.signstartTime * 252) / (this.state.alltime) + 56);
+        } else if (this.state.signendTime !== 0 && this.endX > ((this.state.signendTime * 252) / (this.state.alltime) + 56)) {
+          this.endX = ((this.state.signendTime * 252) / (this.state.alltime) + 56);
         }
-        else{
-          return styles.showMask;
+        if (music.music.entities[music.music.selectid].bmt >= 0 &&
+          this.endX < ((music.music.entities[music.music.selectid].bmt) * 252 / (this.state.alltime) + 56)) {
+          this.endX = ((music.music.entities[music.music.selectid].bmt) * 252 / (this.state.alltime) + 56);
+        } else if (music.music.entities[music.music.selectid].emt > 0 &&
+          this.endX > ((music.music.entities[music.music.selectid].emt) * 252 / (this.state.alltime) + 56)) {
+          this.endX = ((music.music.entities[music.music.selectid].emt) * 252 / (this.state.alltime) + 56);
+        }
+      } else if (this.endX < 56) {
+        this.endX = 56;
+      } else if (this.endX - 300 > 0) {
+        this.endX = 300;
+      }
+      // console.log('123456',this.endX)
+      const x = this.endX - this.startX;
+      // console.log(x);
+      const time = (x / 252) * this.state.alltime;
+      // console.log(time)
+      this.setState({
+        currentTime: myVideo.currentTime + time
+      });
+    }
+  onTouchEnd=event => {
+    console.log(event);
+    const myVideo = document.getElementById('myAudio');
+    myVideo.currentTime = this.state.currentTime;
+    this.setState({
+      ismove: false
+    });
+  }
+  getMaskClassName = isAcitve => {
+    if (!isAcitve) {
+      return styles.hideMask;
+    }
+    else{
+      return styles.showMask;
+    }
+  }
+    getmusicx=event => { // 点击获取新的位置
+      const myVideo = document.getElementById('myAudio');
+      // console.log(event);
+      this.startX = event.clientX;
+      const x = this.startX - 54;
+      const time = (x / 252) * this.state.alltime;
+      this.setState({
+        currentTime: +time
+      });
+      myVideo.currentTime = time;
+    }
+  
+    audioall = src => {
+      // console.log(src)
+      const { ispart } = this.props;
+      const circlewidth = `${(this.state.currentTime / this.state.alltime) * 100}%`;
+      return (
+        <View style={styles.ListenMusic_play_all+`${ispart}`}>
+          {this.playorstop()}
+          <View style={styles.slider_all} onClick={this.getmusicx}>
+            {this.renderprogress()}
+            {this.rendersign()}
+            <View
+              style={styles.slider_circle}
+              style={{ marginLeft: `${circlewidth}` }}
+              type="range"
+              onTouchMove={this.onTouchMove}
+              onTouchStart={this.onTouchStart}
+              onTouchEnd={this.onTouchEnd}
+            />
+            <Video 
+            id="myAudio" 
+            // source={src}
+            // source={{uri:'http://xphoto.xiaoniangao.cn/276442?e=1538323205&token=jy6xdQVmeu6SMLhryyCIi1sRTNvJJpDNP8xAScCT:vUy3wu2fOJg7QR4ZLsiIK9J6VHU='}}
+            source={{uri:'src'}}
+            repeat={true}
+            />
+            {/* <audio
+              id="myAudio"
+              src={src}
+              autoPlay
+              loop
+              onCanPlay={() => this.controlAudio('gettime')}
+              onTimeUpdate={() => this.controlAudio('getCurrentTime')}
+            /> */}
+          </View>
+        </View>
+      );
+    }
+    controlAudio(type) { // 获取时间
+      const { music } = this.props;
+      const myVideo = document.getElementById('myAudio');
+      switch (type) {
+        case 'gettime': {
+          this.setState({
+            alltime: myVideo.duration
+          });
+          break;
+        }
+        case 'getCurrentTime': {
+          if (this.state.ismove === false) {
+            if (this.state.signstartTime !== 0 && myVideo.currentTime < this.state.signstartTime) {
+              myVideo.currentTime = this.state.signstartTime;
+            }
+            if (this.state.signendTime !== 0 && myVideo.currentTime > this.state.signendTime) {
+              myVideo.currentTime = this.state.signstartTime;
+            }
+            if (this.state.signendTime !== 0 && myVideo.currentTime === this.state.signendTime) {
+              this.state.currentTime = this.state.signstartTime;
+              myVideo.currentTime = this.state.signstartTime;
+            }
+            if (!(music.music.recommendresult.indexOf(music.music.selectid) + 1)) {
+              if (music.music.entities[music.music.selectid].bmt !== 0 &&
+                 myVideo.currentTime < music.music.entities[music.music.selectid].bmt) {
+                myVideo.currentTime = music.music.entities[music.music.selectid].bmt;
+              }
+              if (music.music.entities[music.music.selectid].emt !== 0 &&
+                 myVideo.currentTime > music.music.entities[music.music.selectid].emt) {
+                myVideo.currentTime = music.music.entities[music.music.selectid].bmt;
+              }
+              if (music.music.entities[music.music.selectid].emt !== 0 &&
+                 myVideo.currentTime === music.music.entities[music.music.selectid].emt) {
+                this.state.currentTime = music.music.entities[music.music.selectid].bmt;
+                myVideo.currentTime = music.music.entities[music.music.selectid].bmt;
+              }
+            }
+            this.setState({
+              currentTime: myVideo.currentTime
+            });
+            if (myVideo.currentTime === myVideo.duration) {
+              myVideo.currentTime = 0;
+              this.setState({
+                play: false
+              });
+            }
+          }
+          break;
+        }
+        default: break;
+      }
+    }
+    playorstop=() => { // 显示播放还是暂停按钮
+      if (this.state.play === false) {
+        return (
+          <Image source={img2} style={styles.playbtn} onClick={this.playmusic} />
+        );
+      }
+  
+      return (
+        <View>
+          <Image source={img} style={styles.playbtn} onClick={this.playmusic} />
+        </View>
+      );
+    }
+    playmusic=() => { // 播放或暂停
+      const myVideo = document.getElementById('myAudio');
+      if (this.state.play === false) {
+        myVideo.play();
+        this.setState({
+          play: true
+        });
+      } else {
+        myVideo.pause();
+        this.setState({
+          play: false,
+          currentTime: myVideo.currentTime
+        });
+      }
+    }
+    close=() => {
+      console.log("关闭")
+      this.setState({
+        play: true
+      });
+      this.props.onCancel();
+    }
+      signstart=() => { // 标记起点
+        const myVideo = document.getElementById('myAudio');
+        this.setState({
+          signstartTime: myVideo.currentTime
+        });
+      }
+      signend=() => { // 标记终点
+        const myVideo = document.getElementById('myAudio');
+        if (this.state.signstartTime === 0) {
+          alert('请先标记起点');
+        } else if (myVideo.currentTime - this.state.signstartTime < 10) {
+          alert('不足10秒,请重新标记');
+        } else {
+          this.setState({
+            signendTime: myVideo.currentTime
+          });
         }
       }
+      successsign=() => {
+        const { todoActions } = this.props;
+        const { signstartTime } = this.state;
+        const { signendTime } = this.state;
+        if (signstartTime !== 0 && signendTime - signstartTime >= 10) {
+          todoActions.signtime(signstartTime, signendTime);
+          this.props.onCancel();
+        } else {
+          this.props.onCancel();
+        }
+        this.setState({
+          play: true,
+          signstartTime: 0,
+          signendTime: 0
+        });
+      }
+    cleansign=() => {
+      const { todoActions } = this.props;
+      this.setState({
+        signstartTime: 0,
+        signendTime: 0
+      });
+      todoActions.cleansigntime();
+    }
+
     renderBody=()=>{
       const { music, ispart } = this.props;
       const minute = Math.floor(this.state.alltime / 60);
@@ -55,35 +288,232 @@ constructor(props) {
         const src = music.music.entities[music.music.selectid].m_url;
         return (
           <View style={styles.Body}>
-            <View style={styles.close} onPress={this.close}><Text>关闭</Text></View>
+            <View style={styles.close}><Text onPress={this.close}>关闭</Text></View>
             <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
-            {/* {this.audioall(src)} */}
+            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            {this.audioall(src)}
           </View>
         );
       } else if (ispart === 0 && music.music.recommendresult.indexOf(music.music.selectid) + 1) {
         const src = music.music.entities[music.music.selectid].m_url;
         return (
           <View style={styles.Body}>
-            <View style={styles.close} onPress={this.close}><Text>关闭</Text></View>
+            <View style={styles.close}><Text onPress={this.close}>关闭</Text></View>
             <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
-            {/* {this.audioall(src)} */}
+            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            {this.audioall(src)}
           </View>
         );
       } else if (ispart === 2) {
-        const src = music.music.entities.list[music.music.selectid].m_url;
+        const src = music.music.entities[music.music.selectid].m_url;
         return (
-          <View style={styles.part-Body}>
+          <View style={styles.part_Body}>
             {this.renderbuttons()}
             {/* {this.audioall(src)} */}
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
-            <button style={styles.part-close} onPress={this.successsign}><Text>完成</Text></button>
+            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            <button style={styles.part_close} onPress={this.successsign}><Text>完成</Text></button>
           </View>
         );
       }
       return null;
     }
+
+    renderprogress=() => {
+      const { music } = this.props;
+      const shelternow = `${(this.state.signstartTime / this.state.alltime) * 100}%`;
+      if (!(music.music.recommendresult.indexOf(music.music.selectid) + 1)) {
+        const shelter = `${(music.music.entities[music.music.selectid].bmt / this.state.alltime) * 100}%`;
+        const widths = `${(this.state.currentTime / this.state.alltime) * 100}%`;
+        if (this.state.signstartTime !== 0) {
+          return (
+            <View style={styles.slider_shelter_all}>
+              <View style={styles.slider_shelter} style={{ width: `${shelternow}` }} />
+              <View style={styles.sliders} style={{ width: `${widths}` }} />
+            </View>
+          );
+        }// 给截取但未确定时加标记
+        if (music.music.entities[music.music.selectid].bmt !== 0) { // 给确定后加标记
+          return (
+            <View style={styles.slider_shelter_all}>
+              <View style={styles.slider_shelter} style={{ width: `${shelter}` }} />
+              <View style={styles.sliders} style={{ width: `${widths}` }} />
+            </View>
+          );
+        }
+    
+        return (
+          <View style={styles.slider} style={{ width: `${widths}` }} />
+        );
+      }
+    
+      const shelter = `${(music.music.entities[music.music.selectid].bmt / this.state.alltime) * 100}%`;
+      const widths = `${(this.state.currentTime / this.state.alltime) * 100}%`;
+      if (this.state.signstartTime !== 0) {
+        return (
+          <View style={styles.slider_shelter_all}>
+            <View style={styles.slider_shelter} style={{ width: `${shelternow}` }} />
+            <View style={styles.sliders} style={{ width: `${widths}` }} />
+          </View>
+        );
+      }// 给截取但未确定时加标记
+      if (music.music.entities[music.music.selectid].bmt !== 0) {
+        return (
+          <View style={styles.slider_shelter_all}>
+            <View style={styles.slider_shelter} style={{ width: `${shelter}` }} />
+            <View style={styles.sliders} style={{ width: `${widths}` }} />
+          </View>
+        );
+      }
+      return (
+        <View style={styles.slider} style={{ width: `${widths}` }} />
+      );
+    }
+    
+    
+      renderbuttons=() => { // 截取片断
+        // console.log(111,this.state.signstartTime)
+        // console.log(111,this.state.signendTime)
+        const { music } = this.props;
+        if ((music.music.entities[music.music.selectid].bmt === 0 &&
+             music.music.entities[music.music.selectid].emt === 0) &&
+              (this.state.signstartTime === 0 && this.state.signendTime === 0)) {
+          return (
+            <View style={styles.intercept}>
+              <View>
+                <View style={styles.intercept_1}>
+                  <View style={styles.intercept_start}>
+                  <Image
+                    source={img4}
+                    onClick={this.signstart}
+                  />
+                  </View>
+                  <Text style={styles.intercept_descript}>标记起点</Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.intercept_1}>
+                  <View style={styles.intercept_start}>
+                  <Image source={img8} />
+                  </View>
+                   <Text style={styles.intercept_descript}>清除</Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.intercept_1}>
+                <View style={styles.intercept_start}>
+                  <Image
+                    source={img5}
+                    onClick={this.signend}
+                  />
+                  </View>
+                  <Text style={styles.intercept_descript}>标记终点</Text>
+                </View>
+              </View>
+            </View>
+          );
+        } else if (this.state.signstartTime > 0 && this.state.signendTime === 0) {
+          return (
+            <View style={styles.intercept}>
+              <View>
+                <View style={styles.intercept_1}>
+                  <View style={styles.intercept_start}>
+                  <Image source={img6} />
+                  </View>
+                   <Text style={styles.intercept_descript}>标记起点</Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.intercept_1}>
+                  <View style={styles.intercept_start}>
+                  <Image
+                    source={img9}
+                    onClick={this.cleansign}
+                  /> 
+                  </View>
+                  <Text style={styles.intercept_descript}>清除</Text>
+                </View>
+              </View>
+              <View>
+                <View style={styles.intercept_1}>
+                  <View style={styles.intercept_start}>
+                  <Image
+                    source={img5}
+                    onClick={this.signend}
+                  /> 
+                  </View>
+                  <Text style={styles.intercept_descript}>标记终点</Text>
+                </View>
+              </View>
+            </View>
+          );
+        }
+    
+        return (
+          <View style={styles.intercept}>
+            <View>
+              <View style={styles.intercept_1}>
+                <View style={styles.intercept_start}>
+                <Image source={img6} />
+                </View>
+                 <Text style={styles.intercept_descript}>标记起点</Text>
+              </View>
+            </View>
+            <View>
+              <View style={styles.intercept_1}>
+                <View style={styles.intercept_start}>
+                <Image source={img9} onClick={this.cleansign} />
+                </View>
+                 <Text style={styles.intercept_descript}>清除</Text>
+              </View>
+            </View>
+            <View>
+              <View style={styles.intercept_1}>
+                <View style={styles.intercept_start}>
+                <Image source={img7} />
+                </View>
+                 <Text style={styles.intercept_descript}>标记终点</Text>
+              </View>
+            </View>
+          </View>
+        );
+      }
+    
+        rendersign=() => {
+          const { music } = this.props;
+          const startTime = `${(this.state.signstartTime / this.state.alltime) * 0.7 * 100}%`;
+          const endTime = `${(this.state.signendTime / this.state.alltime) * 0.7 * 100}%`;
+          if (!(music.music.recommendresult.indexOf(music.music.selectid) + 1)) {
+            const signstartTime = `${(music.music.entities[music.music.selectid].bmt / this.state.alltime) * 0.7 * 100}%`;
+            const signendTime = `${(music.music.entities[music.music.selectid].emt / this.state.alltime) * 0.7 * 100}%`;
+            if (this.state.signstartTime > 0 && this.state.signendTime === 0) {
+              return (
+                <Image source={img4} style={styles.startsign} style={{ left: `${startTime}` }} />
+              );
+            } else if (this.state.signendTime > 0) {
+              return (
+                <View>
+                  <Image source={img4} style={styles.startsign} style={{ left: `${startTime}` }} />
+                  <Image source={img5} style={styles.endsign} style={{ left: `${endTime}` }} />
+                </View>
+              );
+            }// 渲染未确定的标记
+            if (music.music.entities[music.music.selectid].bmt > 0 &&
+                 music.music.entities[music.music.selectid].emt === 0) { // 只渲染起点标记
+              return (
+                <Image source={img4} style={styles.startsign} style={{ left: `${signstartTime}` }} />
+              );
+            } else if (music.music.entities[music.music.selectid].emt > 0) {
+              return (
+                <View>
+                  <Image source={img4} style={styles.startsign} style={{ left: `${signstartTime}` }} />
+                  <Image source={img5} style={styles.endsign} style={{ left: `${signendTime}` }} />
+                </View>
+              );
+            }
+            return null;
+          }
+          return null;
+        }
     render(){
         const { isAcitve } = this.props;
         if (isAcitve === true) {
@@ -126,9 +556,11 @@ const styles = StyleSheet.create({
     },
     Body:{
       // position: fixed;
-      width: "100%",
-      height: 150,
+      left:70,
       bottom:0,
+      width: 200,
+      height: 150,
+      marginTop:40,
       backgroundColor:"white",
       zIndex: 100,
     },
@@ -141,9 +573,11 @@ const styles = StyleSheet.create({
         marginTop: 18,
     },
     close:{
+      alignItems:"flex-end"
         // float: right;
     },
     ListenMusic_time:{
+      alignItems:"center",
       textAlign: "center",
     },
     ListenMusic_play_all0:{

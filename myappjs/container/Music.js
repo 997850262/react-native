@@ -21,7 +21,8 @@ import {
   TouchableNativeFeedback,
   TouchableWithoutFeedback,
   Alert,
-  navigation
+  navigation,
+  Modal
 } from 'react-native';
 
 
@@ -91,6 +92,7 @@ class Music extends Component {
     const{music,todoActions}=this.props;
     return (
       <View style={styles.container_all} >
+      <Modal>
       {/* <Delect
         style={styles.delectview}
         music={music}
@@ -143,6 +145,7 @@ class Music extends Component {
           ispart={this.state.ispart}
         /> */}
       </ScrollView>
+      </Modal>
       </View>
     );
   }

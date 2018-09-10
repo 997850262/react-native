@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
         height: 150,
         left:90,
         top: 100,
-        backgroundColor:"white"
-        // z-index: 100;
+        backgroundColor:"white",
+        zIndex: 100,
     },
     delect_title: {
         marginTop: 10,
