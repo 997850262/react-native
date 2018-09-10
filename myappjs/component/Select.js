@@ -36,6 +36,7 @@ export default class Select extends Component {
                 selectmore:false
             }
         });
+        this.props.handleselect();
     }
     onselectmore=()=>{
         color1='white';
@@ -46,6 +47,7 @@ export default class Select extends Component {
                 selectmore:true
             }
         });
+        this.props.handlemoreselect();
     }
     renderselectbtn(){
         if(this.state.select==true){

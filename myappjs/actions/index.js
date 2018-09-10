@@ -15,26 +15,27 @@ export function login(mid) {
   };
 }
 
-export function fetchmymusic(token) {
+export function fetchmymusic(token,limit,offset) {
   return {
     Server_Api: {
       type: ActionTypes.Fetchmymusic,
-      endpoint: '/music/my_list',
+      // endpoint: '/music/my_list',
+      endpoint: '/music/list',
       params: {
-        token
+        token,limit,offset
       },
-      normailzerFun: response => normalize(response, schemes.Data)
+      normailzerFun: response => normalize(response.data, schemes.List)
     }
   };
 }
-export function fetchrecommendmusic(token) {
-  console.log(11111111111, token);
+export function fetchrecommendmusic(token,tpl_id) {
   return {
     Server_Api: {
       type: ActionTypes.Fetchrecommendmusic,
-      endpoint: '/music/recommend_list',
+      // endpoint: '/music/recommend_list',
+      endpoint: '/album/get_musics_by_tpl_id',
       params: {
-        token
+        token,tpl_id
       },
       normailzerFun: response => normalize(response.data, schemes.List)
     }

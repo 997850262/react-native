@@ -5,6 +5,8 @@ import * as todoActionCreators from '../actions/index';
 import Select from '../component/Select';
 import MyMusic from '../component/MyMusic';
 import Footer from '../component/Footer';
+import ListenMusic from '../component/ListenMusic';
+import Delect from '../component/Delect';
 import {
   Platform,
   StyleSheet,
@@ -22,115 +24,147 @@ import {
   navigation
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
 class Music extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      select: true,
+      isAcitve: false,
+      ispart: 0
+    };
+  }
   componentDidMount(){
     const { todoActions } = this.props;
-    // const {
-    //   music: {
-    //     music: {
-    //       data: {
-    //         token
-    //       }
-    //     }
-    //   }
-    // } = this.props;
-    todoActions.login(109);
-    // todoActions.fetchmymusic(token);
-    // todoActions.fetchrecommendmusic(token);
+    const token='test181153814';
+    const tpl_id='100022';
+    const limit='30';
+    const offset='0';
+    todoActions.fetchmymusic(token,limit,offset);
+    todoActions.fetchrecommendmusic(token,tpl_id);
   }
-  _onPressButton() {
-    Alert.alert('You tapped the button!')
+  onCancel=() => {
+    this.setState({
+      isAcitve: false
+    });
   }
-
-  _onLongPressButton() {
-    Alert.alert('You long-pressed the button!')
+  ondelect=() => {
+    this.setState({
+      isAcitve: true,
+      ispart: 4
+    });
+  }
+  handleplay=() => {
+    this.setState({
+      isAcitve: true,
+      ispart: 0
+    });
+  }
+  handlepart=() => {
+    this.setState({
+      isAcitve: true,
+      ispart: 2
+    });
+  }
+  handlerename=() => {
+    this.setState({
+      isAcitve: true,
+      ispart: 1
+    });
+  }
+  handlemoreselect=() => {
+    const { todoActions } = this.props;
+    this.setState({
+      select: false
+    });
+    todoActions.onmoreselect();
+  }
+  handleselect=() => {
+    const { todoActions } = this.props;
+    this.setState({
+      select: true
+    });
+    todoActions.onselect();
   }
   render() {
-    let pic = {
-      uri: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg'
-    };
     // const navigate = this.props.navigation;
-    const{music}=this.props;
+    const{music,todoActions}=this.props;
     return (
-      <ScrollView>
-        <Select/>
-        <MyMusic music={music}/>
-        <Footer />
-        <View style={styles.container}>
-          {/* <Tabbar navigate={navigate}/> */}
-          <Text style={styles.welcome}>HELLO WORLD!!!!!!!!!!!!!!!!!!!!!!!!</Text>
-          <Image source={pic} style={{width: 193, height: 110}} />
-          <FlatList
-          data={[
-            {key: 'Devin'},
-            {key: 'Jackson'},
-            {key: 'James'},
-            {key: 'Joel'},
-            {key: 'John'},
-            {key: 'Jillian'},
-            {key: 'Jimmy'},
-            {key: 'Julie'},
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+      <View style={styles.container_all} >
+      {/* <Delect
+        style={styles.delectview}
+        music={music}
+        select={this.state.select}
+        todoActions={todoActions}
+        isAcitve={this.state.isAcitve}
+        onCancel={this.onCancel}
+        ispart={this.state.ispart}
+      /> */}
+      <ListenMusic
+        isAcitve={this.state.isAcitve}
+        todoActions={todoActions}
+        music={music}
+        onCancel={this.onCancel}
+        ispart={this.state.ispart}
+      />
+      <ScrollView style={styles.scrollView}>
+        <Select 
+          todoActions={todoActions}             
+          handleselect={this.handleselect}
+          music={music}
+          handlemoreselect={this.handlemoreselect}
+          select={this.state.select}
         />
-        <SectionList
-          sections={[
-            {title: 'D', data: ['Devin']},
-            {title: 'J', data: ['Jackson', 'James', 'Jillian', 'Jimmy', 'Joel', 'John', 'Julie']},
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-          renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
-          keyExtractor={(item, index) => index}
+        <MyMusic music={music} todoActions={todoActions} select={this.state.select}/>
+        <Footer style={styles.footer}             
+          music={music}
+          todoActions={todoActions}
+          select={this.state.select}
+          handleplay={this.handleplay}
+          ispart={this.state.ispart}
+          handlepart={this.handlepart}
+          handlerename={this.handlerename}
+          isAcitve={this.state.isAcitve}
+          ondelect={this.ondelect}
         />
-        <TouchableHighlight onPress={this._onPressButton} underlayColor="white">
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>TouchableHighlight</Text>
-          </View>
-        </TouchableHighlight>
-        <TouchableOpacity onPress={this._onPressButton}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>TouchableOpacity</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableNativeFeedback
-            onPress={this._onPressButton}
-            background={Platform.OS === 'android' ? TouchableNativeFeedback.SelectableBackground() : ''}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>TouchableNativeFeedback</Text>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableWithoutFeedback
-            onPress={this._onPressButton}
-            >
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>TouchableWithoutFeedback</Text>
-          </View>
-        </TouchableWithoutFeedback>
-        <TouchableHighlight onPress={this._onPressButton} onLongPress={this._onLongPressButton} underlayColor="white">
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Touchable with Long Press</Text>
-          </View>
-        </TouchableHighlight>
-        </View>
+        {/* <ListenMusic
+          isAcitve={this.state.isAcitve}
+          todoActions={todoActions}
+          music={music}
+          onCancel={this.onCancel}
+          ispart={this.state.ispart}
+        /> */}
+        {/* <Delect
+          music={music}
+          select={this.state.select}
+          todoActions={todoActions}
+          isAcitve={this.state.isAcitve}
+          onCancel={this.onCancel}
+          ispart={this.state.ispart}
+        /> */}
       </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  container_all: {
+    height:"100%",
+    width:"100%",
   },
+  delectview: {
+    height:"100%",
+    width:"100%",
+  },
+  scrollView: {
+  },
+  // container: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#F5FCFF',
+  // },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
@@ -164,6 +198,13 @@ const styles = StyleSheet.create({
   buttonText: {
     padding: 20,
     color: 'white'
+  },
+  footer: {
+  // height:80,
+  // width:350,
+  // justifyContent:'center',
+  // alignItems:'center',
+  // position:'absolute',
   }
 });
 

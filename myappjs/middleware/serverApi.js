@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_DOMAIN = 'http://xly-wkop.xiaoniangao.cn';
+// const API_DOMAIN = 'http://xly-wkop.xiaoniangao.cn';
+const API_DOMAIN = 'https://api.xiaoniangao.cn';
 const axiosFetch = axios.create({
   baseURL: API_DOMAIN,
   timeout: 60000,
@@ -58,9 +59,9 @@ const serverApi = store => next => action => {
     .then(res => {
       console.log(999, res);
       const response = typeof (normailzerFun) !== 'undefined' ? normailzerFun(res.data) : res.data;
-      if (params.gettoken) {
-        params.gettoken(res.data);
-      }
+      // if (params.gettoken) {
+      //   params.gettoken(res.data);
+      // }
       console.log('中间件', response);
       next(actionWith({
         type: `${type}_SUC`,
