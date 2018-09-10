@@ -55,20 +55,20 @@ constructor(props) {
         const src = music.music.entities[music.music.selectid].m_url;
         return (
           <View style={styles.Body}>
-            <View style={styles.close} onClick={this.close}><Text>关闭</Text></View>
-            <View style={styles.title}>{music.music.entities.list[music.music.selectid].name}</View>
+            <View style={styles.close} onPress={this.close}><Text>关闭</Text></View>
+            <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
             <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
             {/* {this.audioall(src)} */}
           </View>
         );
       } else if (ispart === 0 && music.music.recommendresult.indexOf(music.music.selectid) + 1) {
-        const src = music.music.recommendentities[music.music.selectid].m_url;
+        const src = music.music.entities[music.music.selectid].m_url;
         return (
           <View style={styles.Body}>
-            <View style={styles.close} onClick={this.close}><Text>关闭</Text></View>
-            <View style={styles.title}>{music.music.recommendentities[music.music.selectid].name}</View>
+            <View style={styles.close} onPress={this.close}><Text>关闭</Text></View>
+            <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
             <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
-            {this.audioall(src)}
+            {/* {this.audioall(src)} */}
           </View>
         );
       } else if (ispart === 2) {
@@ -76,9 +76,9 @@ constructor(props) {
         return (
           <View style={styles.part-Body}>
             {this.renderbuttons()}
-            {this.audioall(src)}
+            {/* {this.audioall(src)} */}
             <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}</Text><Text>/{minute}:{second}</Text></View>
-            <button style={styles.part-close} onClick={this.successsign}><Text>完成</Text></button>
+            <button style={styles.part-close} onPress={this.successsign}><Text>完成</Text></button>
           </View>
         );
       }
