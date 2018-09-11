@@ -39,7 +39,9 @@ export default class MyMusic extends Component {
         if(select === true &&item.id==music.music.selectid){
             console.log(951)
             return(
-                <Image style={{width:70,height:70}} source={img}/>
+                <View style={styles.selectone}>
+                    <Image style={{width:30,height:20}} source={img}/>
+                </View>
             )
         }
 }
@@ -86,8 +88,9 @@ rendermoreselectmusic=(item)=>{
                     renderItem={({item}) =>
                     <View>
                     {this.rendermoreselectmusic(item)}
+                    {this.renderselectmusic(item)}
                     <Text style={styles.music} onPress={()=>this.handleselect(item)}>
-                    {this.renderselectmusic(item)}{item.name}
+                    {item.name}
                     </Text>
                     </View>
                     }
@@ -98,8 +101,9 @@ rendermoreselectmusic=(item)=>{
                     renderItem={({item}) => 
                     <View>
                     {this.rendermoreselectmusic(item)}
+                    {this.renderselectmusic(item)}
                     <Text style={styles.music} onPress={()=>this.handleselect(item)}>
-                    {this.renderselectmusic(item)}{item.name}
+                    {item.name}
                     </Text>
                     </View>
                     }
@@ -118,7 +122,8 @@ const styles = StyleSheet.create({
         flexDirection :'row',
       },
       musiccontainer: {
-        paddingLeft:10
+        paddingLeft:10,
+        marginBottom:100
       },
       welcome: {
         fontSize: 24,
@@ -133,6 +138,12 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderBottomColor: 'black',
         borderBottomWidth:1
+      },
+      selectone:{
+        position:"absolute",
+        width:30,
+        height:20,
+        marginTop:10
       },
       moreselect:{
         width: 20,

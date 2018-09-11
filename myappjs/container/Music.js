@@ -32,7 +32,8 @@ class Music extends Component {
     this.state = {
       select: true,
       isAcitve: false,
-      ispart: 0
+      ispart: 0,
+      modalVisible: false
     };
   }
   componentDidMount(){
@@ -44,32 +45,37 @@ class Music extends Component {
     todoActions.fetchmymusic(token,limit,offset);
     todoActions.fetchrecommendmusic(token,tpl_id);
   }
-  onCancel=() => {
+  onCancel=(visible) => {
     this.setState({
-      isAcitve: false
+      isAcitve: false,
+      modalVisible: visible
     });
   }
-  ondelect=() => {
+  ondelect=(visible) => {
     this.setState({
       isAcitve: true,
+      modalVisible: visible,
       ispart: 4
     });
   }
-  handleplay=() => {
+  handleplay=(visible) => {
     this.setState({
       isAcitve: true,
+      modalVisible: visible,
       ispart: 0
     });
   }
-  handlepart=() => {
+  handlepart=(visible) => {
     this.setState({
       isAcitve: true,
+      modalVisible: visible,
       ispart: 2
     });
   }
-  handlerename=() => {
+  handlerename=(visible) => {
     this.setState({
       isAcitve: true,
+      modalVisible: visible,
       ispart: 1
     });
   }
@@ -87,13 +93,22 @@ class Music extends Component {
     });
     todoActions.onselect();
   }
+
+  // state = {
+  //   modalVisible: false
+  // };
+
+  // setModalVisible(visible) {
+  //   this.setState({ modalVisible: visible });
+  // }
+
   render() {
     // const navigate = this.props.navigation;
     const{music,todoActions}=this.props;
     return (
       <View style={styles.container_all} >
-      <Modal>
-      {/* <Delect
+      {/* <Modal> */}
+      <Delect
         style={styles.delectview}
         music={music}
         select={this.state.select}
@@ -101,7 +116,7 @@ class Music extends Component {
         isAcitve={this.state.isAcitve}
         onCancel={this.onCancel}
         ispart={this.state.ispart}
-      /> */}
+      />
       <ListenMusic
         isAcitve={this.state.isAcitve}
         todoActions={todoActions}
@@ -109,15 +124,20 @@ class Music extends Component {
         onCancel={this.onCancel}
         ispart={this.state.ispart}
       />
+        <View style={styles.select_all}>
+          <Select 
+            todoActions={todoActions}             
+            handleselect={this.handleselect}
+            music={music}
+            handlemoreselect={this.handlemoreselect}
+            select={this.state.select}
+          />
+        </View>
       <ScrollView style={styles.scrollView}>
-        <Select 
-          todoActions={todoActions}             
-          handleselect={this.handleselect}
-          music={music}
-          handlemoreselect={this.handlemoreselect}
-          select={this.state.select}
-        />
         <MyMusic music={music} todoActions={todoActions} select={this.state.select}/>
+      </ScrollView>
+      {/* </Modal> */}
+        <View style={styles.footer_all}>
         <Footer style={styles.footer}             
           music={music}
           todoActions={todoActions}
@@ -129,29 +149,22 @@ class Music extends Component {
           isAcitve={this.state.isAcitve}
           ondelect={this.ondelect}
         />
-        {/* <ListenMusic
-          isAcitve={this.state.isAcitve}
-          todoActions={todoActions}
-          music={music}
-          onCancel={this.onCancel}
-          ispart={this.state.ispart}
-        /> */}
-        {/* <Delect
-          music={music}
-          select={this.state.select}
-          todoActions={todoActions}
-          isAcitve={this.state.isAcitve}
-          onCancel={this.onCancel}
-          ispart={this.state.ispart}
-        /> */}
-      </ScrollView>
-      </Modal>
+        </View>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  // test1:{
+  //   backgroundColor:"yellow",
+  //   opacity:0.5
+  // },
+  // test2:{
+  //   marginTop:100,
+  //   backgroundColor:"blue",
+  //   opacity:0.3
+  // },
   container_all: {
     height:"100%",
     width:"100%",
@@ -160,7 +173,13 @@ const styles = StyleSheet.create({
     height:"100%",
     width:"100%",
   },
+  select_all: {
+    position:"relative",
+    height:50,
+    width:"100%",
+  },
   scrollView: {
+    position:"relative"
   },
   // container: {
   //   flex: 1,
@@ -201,6 +220,12 @@ const styles = StyleSheet.create({
   buttonText: {
     padding: 20,
     color: 'white'
+  },
+  footer_all: {
+    position:"absolute",
+    bottom:0,
+    left:0,
+    zIndex:100
   },
   footer: {
   // height:80,

@@ -140,7 +140,7 @@ function music(state = {
     case ActionTypes.Rename:
     {
       console.log(123, action.name);
-      console.log(123, state.entities.list[state.selectid].name);
+      console.log(123, state.entities[state.selectid].name);
       const newState = { ...state };
       if (state.entities[state.selectid].plp == undefined) {
         newState.entities[state.selectid].name = action.name;

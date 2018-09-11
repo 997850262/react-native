@@ -169,7 +169,8 @@ import {
 } from 'react-native';
 import {
   createStackNavigator,
-  TabNavigator
+  TabNavigator,
+  createMaterialTopTabNavigator
 } from 'react-navigation';
 import AppWrapper from './myappjs/container/AppWrapper';
 import Music from './myappjs/container/Music';
@@ -185,7 +186,7 @@ const store = configureStore();
 //   initialRouteName: 'Music',
 // });
 
-const Tabs = TabNavigator({
+const Tabs = createMaterialTopTabNavigator({
   Music: {
       screen: Music,
       navigationOptions: {  // 也可以写在组件的static navigationOptions内

@@ -30,14 +30,15 @@ export default class Delect extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: ''
+      name: '',
+      text: 'Useless Placeholder'
     };
-    this.handlerename = this.handlerename.bind(this);
+    // this.handlerename = this.handlerename.bind(this);
   }
   onrename=() => {
     const { todoActions } = this.props;
-    // const name = this.state.name;
-    const { name } = this.state;
+    const name = this.state.text;
+    // const { name } = this.state;
     //   console.log(name)
     todoActions.rename(name);
     this.props.onCancel();
@@ -61,11 +62,11 @@ export default class Delect extends Component {
     }
     this.props.onCancel();
   }
-  handlerename=e => {
-    this.setState({
-      name: e.target.value
-    });
-  }
+  // handlerename=(e,text) => {
+  //   this.setState({
+  //     text: e.target.value
+  //   });
+  // }
   renderBody=()=>{
     const { music, select, ispart } = this.props;
     const count = music.music.selectmoreid.length;
@@ -97,7 +98,8 @@ export default class Delect extends Component {
             style={styles.rename_input}
             type="text"
             defaultValue={music.music.entities[music.music.selectid].name}
-            onChange={this.handlerename}
+            onChangeText={(text)=>this.setState({text})}
+            value={this.state.text}
           />
           <View style={styles.rename_btn}>
             <Text style={styles.rename_btn1} onPress={this.props.onCancel}>取消</Text>
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
         width: 175,
         height: 150,
         left:90,
-        top: 100,
+        top: 20,
         backgroundColor:"white",
         zIndex: 100,
     },
@@ -170,6 +172,7 @@ const styles = StyleSheet.create({
     },
     delect_btn: {
         display: "flex",
+        flexDirection:"row",
         justifyContent:"space-around",
         marginTop: 30,
     },
@@ -191,12 +194,12 @@ const styles = StyleSheet.create({
         width: 175,
         height: 150,
         left:90,
-        top: 100,
+        top: 20,
         backgroundColor:"white",
         // z-index: 100;
     },
     rename_title:{
-        marginTop: 10,
+        marginTop: 5,
         fontSize: 20,
         fontWeight: "600",
     },
@@ -205,6 +208,7 @@ const styles = StyleSheet.create({
     },
     rename_btn:{
         display: "flex",
+        flexDirection:"row",
         justifyContent:"space-around",
         marginTop: 30,
     },

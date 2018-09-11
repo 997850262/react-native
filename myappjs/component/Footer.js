@@ -26,12 +26,12 @@ export default class Footer extends Component {
     }
     }
     rename=()=>{
-        this.props.handlerename();
+        this.props.handlerename(true);
     }
     cut=()=>{
     const { select } = this.props;
     if (select === true) {
-      this.props.handlepart();
+      this.props.handlepart(true);
     } else {
       alert('多选状态不能选择片段');
     }
@@ -45,7 +45,7 @@ export default class Footer extends Component {
         }
       }
     delete=()=>{
-        this.props.ondelect();
+        this.props.ondelect(true);
     }
     render(){
         return(

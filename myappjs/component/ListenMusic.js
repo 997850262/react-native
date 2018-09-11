@@ -16,7 +16,9 @@ import {
   AppRegistry,
   Button
 } from 'react-native';
-import Video from 'react-native-video'
+import {AudioRecorder,AudioUtils} from 'react-native-video';
+// import Sound from 'react-native-sound';
+
 const img = require('../source/btn_pause.png');// 暂停
 const img2 = require('../source/btn_play.png');// 播放
 // const img3 = require('../../source/cut_music_finish.png');// 完成
@@ -115,8 +117,15 @@ constructor(props) {
       // console.log(src)
       const { ispart } = this.props;
       const circlewidth = `${(this.state.currentTime / this.state.alltime) * 100}%`;
+      // const sound = new Sound('src',null, (e) => {
+      //           if (error) {
+      //                console.log('播放失败');
+      //               return;
+      //           }
+      //           sound.play(() => sound.release());
+      //       });
       return (
-        <View style={styles.ListenMusic_play_all+`${ispart}`}>
+        <View style={styles[`ListenMusic_play_all${ispart}`]}>
           {this.playorstop()}
           <View style={styles.slider_all} onClick={this.getmusicx}>
             {this.renderprogress()}
@@ -129,14 +138,7 @@ constructor(props) {
               onTouchStart={this.onTouchStart}
               onTouchEnd={this.onTouchEnd}
             />
-            <Video 
-            id="myAudio" 
-            // source={src}
-            // source={{uri:'http://xphoto.xiaoniangao.cn/276442?e=1538323205&token=jy6xdQVmeu6SMLhryyCIi1sRTNvJJpDNP8xAScCT:vUy3wu2fOJg7QR4ZLsiIK9J6VHU='}}
-            source={{uri:'src'}}
-            repeat={true}
-            />
-            {/* <audio
+            {/* <Audio
               id="myAudio"
               src={src}
               autoPlay
@@ -557,7 +559,7 @@ const styles = StyleSheet.create({
     Body:{
       // position: fixed;
       left:70,
-      bottom:0,
+      bottom:20,
       width: 200,
       height: 150,
       marginTop:40,
@@ -581,6 +583,7 @@ const styles = StyleSheet.create({
       textAlign: "center",
     },
     ListenMusic_play_all0:{
+      flexDirection:"row",
         marginLeft: 15,
         display: "flex",
     },
