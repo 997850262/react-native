@@ -45,10 +45,10 @@ class Music extends Component {
     todoActions.fetchmymusic(token,limit,offset);
     todoActions.fetchrecommendmusic(token,tpl_id);
   }
-  onCancel=(visible) => {
+  onCancel=() => {
     this.setState({
       isAcitve: false,
-      modalVisible: visible
+      modalVisible: false
     });
   }
   ondelect=(visible) => {
@@ -94,20 +94,17 @@ class Music extends Component {
     todoActions.onselect();
   }
 
-  // state = {
-  //   modalVisible: false
-  // };
-
-  // setModalVisible(visible) {
-  //   this.setState({ modalVisible: visible });
-  // }
-
   render() {
     // const navigate = this.props.navigation;
     const{music,todoActions}=this.props;
     return (
-      <View style={styles.container_all} >
-      {/* <Modal> */}
+  <View style={styles.container_all} >
+    <Modal 
+      animationType="slide"
+      transparent={false}
+      visible={this.state.modalVisible}
+      // transparent={false}
+    >
       <Delect
         style={styles.delectview}
         music={music}
@@ -124,6 +121,7 @@ class Music extends Component {
         onCancel={this.onCancel}
         ispart={this.state.ispart}
       />
+    </Modal>
         <View style={styles.select_all}>
           <Select 
             todoActions={todoActions}             
@@ -136,7 +134,6 @@ class Music extends Component {
       <ScrollView style={styles.scrollView}>
         <MyMusic music={music} todoActions={todoActions} select={this.state.select}/>
       </ScrollView>
-      {/* </Modal> */}
         <View style={styles.footer_all}>
         <Footer style={styles.footer}             
           music={music}
@@ -150,7 +147,7 @@ class Music extends Component {
           ondelect={this.ondelect}
         />
         </View>
-      </View>
+  </View>
     );
   }
 }

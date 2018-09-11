@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
         marginTop:10
       },
       moreselect:{
+        position:"absolute",
         width: 20,
         height: 20,
         borderRadius:10,
@@ -153,9 +154,11 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderColor: 'black',
         borderWidth:1,
-        marginTop: 10,
+        marginTop: 15,
+        marginLeft:10
     },
     moreselect_white:{
+        position:"absolute",
         width: 20,
         height: 20,
         borderRadius:10,
@@ -163,7 +166,8 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         borderColor: 'black',
         borderWidth:1,
-        marginTop: 10,
+        marginTop: 15,
+        marginLeft:10
     },
     list_all:{
         display: "flex",

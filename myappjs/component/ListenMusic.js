@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import {AudioRecorder,AudioUtils} from 'react-native-video';
 // import Sound from 'react-native-sound';
+// import { default as Sound } from 'react-native-sound';
 
 const img = require('../source/btn_pause.png');// 暂停
 const img2 = require('../source/btn_play.png');// 播放
@@ -127,17 +128,24 @@ constructor(props) {
       return (
         <View style={styles[`ListenMusic_play_all${ispart}`]}>
           {this.playorstop()}
-          <View style={styles.slider_all} onClick={this.getmusicx}>
+          <View style={styles.slider_all} onPress={this.getmusicx}>
             {this.renderprogress()}
             {this.rendersign()}
+            <TouchableWithoutFeedback
+            onPressIn={this.onTouchStart}
+            onPressOut={this.onTouchEnd}
+            onPress={this.onTouchMove}
+            >
             <View
+              // style={[styles.slider_circle,{marginLeft: `${circlewidth}`}]}
               style={styles.slider_circle}
-              style={{ marginLeft: `${circlewidth}` }}
-              type="range"
-              onTouchMove={this.onTouchMove}
-              onTouchStart={this.onTouchStart}
-              onTouchEnd={this.onTouchEnd}
+              // style={{ marginLeft: `${circlewidth}` }}
+              // type="range"
+              // onTouchMove={this.onTouchMove}
+              // onTouchStart={this.onTouchStart}
+              // onTouchEnd={this.onTouchEnd}
             />
+            </TouchableWithoutFeedback>
             {/* <Audio
               id="myAudio"
               src={src}
@@ -205,28 +213,30 @@ constructor(props) {
     playorstop=() => { // 显示播放还是暂停按钮
       if (this.state.play === false) {
         return (
-          <Image source={img2} style={styles.playbtn} onClick={this.playmusic} />
+          <TouchableWithoutFeedback onPress={this.playmusic}>
+          <Image source={img2} style={styles.playbtn} />
+          </TouchableWithoutFeedback>
         );
       }
   
       return (
-        <View>
-          <Image source={img} style={styles.playbtn} onClick={this.playmusic} />
-        </View>
+        <TouchableWithoutFeedback onPress={this.playmusic}>
+          <Image source={img} style={styles.playbtn} />
+        </TouchableWithoutFeedback>
       );
     }
     playmusic=() => { // 播放或暂停
-      const myVideo = document.getElementById('myAudio');
+      // const myVideo = document.getElementById('myAudio');
       if (this.state.play === false) {
-        myVideo.play();
+        // myVideo.play();
         this.setState({
           play: true
         });
       } else {
-        myVideo.pause();
+        // myVideo.pause();
         this.setState({
           play: false,
-          currentTime: myVideo.currentTime
+          // currentTime: myVideo.currentTime
         });
       }
     }
@@ -291,8 +301,8 @@ constructor(props) {
         return (
           <View style={styles.Body}>
             <View style={styles.close}><Text onPress={this.close}>关闭</Text></View>
-            <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            <View><Text style={styles.title}>{music.music.entities[music.music.selectid].name}</Text></View>
+            <View><Text style={styles.ListenMusic_time}>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
             {this.audioall(src)}
           </View>
         );
@@ -301,8 +311,8 @@ constructor(props) {
         return (
           <View style={styles.Body}>
             <View style={styles.close}><Text onPress={this.close}>关闭</Text></View>
-            <View style={styles.title}><Text>{music.music.entities[music.music.selectid].name}</Text></View>
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            <View><Text style={styles.title}>{music.music.entities[music.music.selectid].name}</Text></View>
+            <View><Text style={styles.ListenMusic_time}>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
             {this.audioall(src)}
           </View>
         );
@@ -311,9 +321,9 @@ constructor(props) {
         return (
           <View style={styles.part_Body}>
             {this.renderbuttons()}
-            {/* {this.audioall(src)} */}
-            <View style={styles.ListenMusic_time}><Text>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
-            <button style={styles.part_close} onPress={this.successsign}><Text>完成</Text></button>
+            {this.audioall(src)}
+            <View><Text style={styles.ListenMusic_time}>{currentminute}:{currentsecond}/{minute}:{second}</Text></View>
+            <Button onPress={this.successsign} title="完成" color="gray"><Text style={styles.part_close}>完成</Text></Button>
           </View>
         );
       }
@@ -534,9 +544,9 @@ constructor(props) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#F5FCFF',
-        flexDirection :'row',
+        // flex: 1,
+        // backgroundColor: '#F5FCFF',
+        // flexDirection :'row',
       },
     hideMask: {
       position:"absolute",
@@ -554,15 +564,14 @@ const styles = StyleSheet.create({
         bottom: 0,
         right: 0,
         backgroundColor: "rgba(0, 0, 0, .6)",
-        opacity: 1
+        opacity: 0.6
     },
     Body:{
-      // position: fixed;
-      left:70,
-      bottom:20,
-      width: 200,
+      // position: "fixed",
+      left:0,
+      right:0,
+      bottom:0,
       height: 150,
-      marginTop:40,
       backgroundColor:"white",
       zIndex: 100,
     },
@@ -572,6 +581,7 @@ const styles = StyleSheet.create({
     },
     title:{
         textAlign: "center",
+        justifyContent:"flex-end",
         marginTop: 18,
     },
     close:{
@@ -620,17 +630,18 @@ const styles = StyleSheet.create({
       zIndex: 200
     },
     slider_circle:{
-        position: "relative",
+        position: "absolute",
         width: 24,
         height: 24,
         borderRadius:12,
-        backgroundColor: "white",
+        backgroundColor: "red",
         // border: 1px solid black;
         borderStyle: 'solid',
         borderColor: 'black',
         borderWidth:1,
         marginLeft: -12,
-        marginTop: -15,
+        marginTop: -5,
+        zIndex:400
     },
     part_Body:{
       // position: fixed;
@@ -643,11 +654,12 @@ const styles = StyleSheet.create({
     part_close:{
         position: "absolute",
         bottom: 0,
-        height: 40,
+        height: 80,
         width: "100%",
     },
     intercept:{
         display: "flex",
+        flexDirection:"row",
         justifyContent:"space-around",
         marginTop: 20,
     },
@@ -669,6 +681,7 @@ const styles = StyleSheet.create({
         flexDirection: "column"
     },
     ListenMusic_play_all2:{
+      flexDirection:"row",
       marginLeft: 15,
       marginTop: 20,
       display: "flex",

@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5FCFF',
         flexDirection :'row',
+        justifyContent:"flex-start"
       },
     container: {
-    width:50,
-    flex: 1,
+    width:80,
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     marginTop: 10
     },
     select: {
-    marginLeft:20,
+    marginLeft:25,
     },
     // selectone: {
     //     width:14,

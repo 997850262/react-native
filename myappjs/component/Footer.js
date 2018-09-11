@@ -20,7 +20,7 @@ export default class Footer extends Component {
     play=()=>{
     const { select } = this.props;
     if (select === true) {
-        this.props.handleplay();
+        this.props.handleplay(true);
     } else {
         alert('多选状态不能播放');
     }
